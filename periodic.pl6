@@ -57,10 +57,8 @@ my $vbox = GTK::Simple::VBox.new(
 );
 
 
-$app.set-content($vbox);
-$app.border-width = 20;
-$app.signal-supply("show").tap: {
-  { .say ; .<entry>.destroy } for %ELEMENT-ENTRIES;
-}
-
-$app.run;
+{
+  .set-content($vbox);
+  .border-width = 20;
+  .run;
+} given $app;
