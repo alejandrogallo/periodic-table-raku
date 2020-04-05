@@ -23,6 +23,6 @@ my constant @EXTENDED-PERIODIC-TABLE is export
     , < Fr Ra X Rf Db Sg Bh Hs Mt Ds Rg Cn Nh Fl Mc Lv Ts Og >
     , (<X>,)
     , < X X La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu >
-    , < X X Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr >
+    , < X X Ac Th Pa U Np Pu Am Cm Bk Cf Es Fm Md No Lr >
     )
     ;

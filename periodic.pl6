@@ -10,16 +10,28 @@ my GTK::Simple::App $app .= new(title => "Grid layouts!");
 
 my $progress = GTK::Simple::ProgressBar.new;
 
+my %ELEMENT-ENTRIES;
+
 multi sub element-to-box (Element $e, Int $row, Int $col) of Pair {
   {
+
+    %ELEMENT-ENTRIES{$e} = hash label => GTK::Simple::MarkUpLabel.new(text=>"")
+                              , entry => $_
+                              ;
+
     .map: {.width-chars = 3};
     .changed.tap: {
+
       if $e eq .text {
+        #.hide;
+        %ELEMENT-ENTRIES{$e}<label>.text = qq!<span foreground="green">YES</span>!;
         $progress.fraction += 1/$NUMBER-OF-ATOMS;
-        .signal-supply("key-press-event")
+      } else {
+        %ELEMENT-ENTRIES{$e}<label>.text = qq!<span foreground="red">NO</span>!;
       }
     };
-    [$row, $col, 1, 1] => $_
+    [$row, $col, 1, 1] => GTK::Simple::VBox.new(
+      $_, %ELEMENT-ENTRIES{$e}<label>)
   } given GTK::Simple::Entry.new(text => "")
 }
 
@@ -44,7 +56,11 @@ my $vbox = GTK::Simple::VBox.new(
   $a, $progress
 );
 
+
 $app.set-content($vbox);
 $app.border-width = 20;
+$app.signal-supply("show").tap: {
+  { .say ; .<entry>.destroy } for %ELEMENT-ENTRIES;
+}
 
 $app.run;
