@@ -1,0 +1,25 @@
+{
+  "authors" : [
+    "Alejandro Gallo <alejandro.gallo@tuwien.ac.at>"
+  ],
+  "build-depends" : [ "GTK::Simple" ],
+  "depends" : [ ],
+  "description" : "Simple periodic table trainer",
+  "license" : "GPLv3",
+  "meta6" : "0",
+  "name" : "PeriodicTableTrainer",
+  "perl" : "6.*",
+  "provides" : {
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/alejandrogallo/periodic-table-raku.git",
+  "support" : {
+    "source" : "https://github.com/alejandrogallo/periodic-table-raku"
+  },
+  "tags" : [
+    "gui", "quantum chemistry", "quantum", "gtk", "application", "science",
+    "chemistry", "periodic table"
+  ],
+  "test-depends" : [ ],
+  "version" : "0.0.1"
+}
