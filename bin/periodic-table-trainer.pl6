@@ -1,9 +1,12 @@
 #!/usr/bin/env raku
 
 use v6;
-use lib 'lib';
 use GTK::Simple;
 use GTK::Simple::App;
+
+my %ENTRIES; # will have all gtk widgets for every element
+my $APP = GTK::Simple::App.new(title => "Periodic table trainer");
+my $PROGRESS = GTK::Simple::ProgressBar.new; # the progress bar
 
 my constant @EXTENDED-PERIODIC-TABLE =
 (  <  H   X   X   X   X   X   X   X   X   X   X   X   X   X   X   X   X   He  >
@@ -18,64 +21,47 @@ my constant @EXTENDED-PERIODIC-TABLE =
 ,  <  X   X   Ac  Th  Pa  U   Np  Pu  Am  Cm  Bk  Cf  Es  Fm  Md  No  Lr  X   >
 )
 ;
-
 my constant @ALL-ATOMS = @EXTENDED-PERIODIC-TABLE.flat.unique;
-
 subset Element of Str where * ∈ @ALL-ATOMS ;
 
-my GTK::Simple::App $app .= new(title => "Periodic table trainer");
-
-my $PROGRESS = GTK::Simple::ProgressBar.new;
-
-my %ELEMENT-ENTRIES;
 
 multi sub element-to-box (Element $e, Int $row, Int $col) of Pair {
   {
-    %ELEMENT-ENTRIES{$e} = hash label => GTK::Simple::MarkUpLabel.new(text=>"")
+    %ENTRIES{$e} = hash label => GTK::Simple::MarkUpLabel.new(text=>"")
                               , entry => $_
                               ;
 
-    .map: {.width-chars = 3};
-    .changed.tap: {
-
+    .map: {.width-chars = 3}; # set entry to 3 chars wide
+    .changed.tap: {           # what to do if the input changed
       if $e eq .text {
-        %ELEMENT-ENTRIES{$e}<label>.text = qq!<span foreground="green">YES</span>!;
+        %ENTRIES{$e}<label>.text = qq!<span foreground="green">YES</span>!;
         $PROGRESS.fraction += 1/+@ALL-ATOMS;
       } else {
-        %ELEMENT-ENTRIES{$e}<label>.text = qq!<span foreground="red">NO</span>!;
+        %ENTRIES{$e}<label>.text = qq!<span foreground="red">NO</span>!;
       }
     };
-    [$row, $col, 1, 1] =>
-                      GTK::Simple::VBox.new($_, %ELEMENT-ENTRIES{$e}<label>)
+    [$row, $col, 1, 1] => GTK::Simple::VBox.new($_, %ENTRIES{$e}<label>)
   } given GTK::Simple::Entry.new(text => "")
 }
+
 
 sub MAIN {
 
   my @periodic-table-cells = gather {
-    my Int $i = -1;
-    for @EXTENDED-PERIODIC-TABLE -> @row {
-        my Int $j = -1;
-        $i++;
-      for @row -> $el {
-        $j++;
+    for 1..* Z @EXTENDED-PERIODIC-TABLE -> ($i, @row) {
+      for 1..* Z @row -> ($j, $el) {
         take element-to-box $el, $j, $i if not $el eq <X>
       }
     }
   }
 
-  my GTK::Simple::Grid $a .= new(
-    |@periodic-table-cells
-  );
-
-  my $vbox = GTK::Simple::VBox.new(
-    $a, $PROGRESS
-  );
-
+  my GTK::Simple::Grid $periodic-table-grid .= new: |@periodic-table-cells;
+  my GTK::Simple::VBox $vbox .= new: $periodic-table-grid, $PROGRESS;
 
   {
     .set-content($vbox);
     .border-width = 20;
     .run;
-  } given $app;
+  } given $APP;
+
 }
