@@ -28,8 +28,8 @@ subset Element of Str where * ∈ @ALL-ATOMS ;
 multi sub element-to-box (Element $e, Int $row, Int $col) of Pair {
   {
     %ENTRIES{$e} = hash label => GTK::Simple::MarkUpLabel.new(text=>"")
-                              , entry => $_
-                              ;
+                      , entry => $_
+                      ;
 
     .map: {.width-chars = 3}; # set entry to 3 chars wide
     .changed.tap: {           # what to do if the input changed
